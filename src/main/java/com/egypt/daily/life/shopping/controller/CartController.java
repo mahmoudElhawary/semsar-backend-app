@@ -38,14 +38,14 @@ public class CartController {
 	private CartService cartService;
 
 	@Autowired
-	private ProductService productService ;
-	
+	private ProductService productService;
+
 	@Autowired
 	private CartItemRepository cartItemRepository;
 
 	@Autowired
 	private ShippingAddressRepository shippingAddressRepository;
-	
+
 	@Autowired
 	private CartRepository cartRepository;
 
@@ -56,38 +56,52 @@ public class CartController {
 
 	@GetMapping("getCartByUserId/{id}")
 	public ResponseEntity<List<Cart>> getCartByUserId(@PathVariable("id") Long id) {
-		List<Cart> carts = cartService.findByUserId(id);
-		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
-	}
-	
-	@GetMapping("getUserOrderByUserId/{id}")
-	public ResponseEntity<List<Cart>> getUserOrderByUserId(@PathVariable("id") Long id) {
-		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(true, id);
-		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
-	}
-	
-	@GetMapping("getShippingAddressUserId/{id}")
-	public ResponseEntity<List<ShippingAddress>> getShippingAddressUserId(@PathVariable("id") Long id) {
-		List<ShippingAddress> carts = shippingAddressRepository.findAllByUserId(id);
-		return new ResponseEntity<List<ShippingAddress>>(carts, HttpStatus.OK);
-	}
-	
-	@GetMapping("findAllOrders")
-	public ResponseEntity<List<Cart>> getAllOrders() {
-		List<Cart> carts = cartService.findAllByIsOrdered(true) ;
+		if (id == null) {
+			throw new NullPointerException();
+		}
+		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(false, id);
 		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
 	}
 
-	
+	@GetMapping("getUserOrderByUserId/{id}")
+	public ResponseEntity<List<Cart>> getUserOrderByUserId(@PathVariable("id") Long id) {
+		if (id == null) {
+			throw new NullPointerException();
+		}
+		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(true, id);
+		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
+	}
+
+	@GetMapping("getShippingAddressUserId/{id}")
+	public ResponseEntity<List<ShippingAddress>> getShippingAddressUserId(@PathVariable("id") Long id) {
+		if (id == null) {
+			throw new NullPointerException();
+		}
+		List<ShippingAddress> carts = shippingAddressRepository.findAllByUserId(id);
+		return new ResponseEntity<List<ShippingAddress>>(carts, HttpStatus.OK);
+	}
+
+	@GetMapping("findAllOrders")
+	public ResponseEntity<List<Cart>> getAllOrders() {
+		List<Cart> carts = cartService.findAllByIsOrdered(true);
+		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
+	}
+
 	@PostMapping("/cartByUser")
 	public ResponseEntity<List<Cart>> getCartByUser(@RequestBody User user) {
-		List<Cart> cartDB = cartService.findByUser(user);
+		if (user == null) {
+			throw new NullPointerException();
+		}
+		List<Cart> cartDB =cartService.findAllByIsOrderedAndUserId(false, user.getId());
 		return new ResponseEntity<List<Cart>>(cartDB, HttpStatus.OK);
 	}
 
 	@PostMapping("/saveCart")
 	public ResponseEntity<List<Cart>> saveCart(@RequestParam("product") String product,
 			@RequestParam("user") String user) throws JsonParseException, JsonMappingException, IOException {
+		if (product == null || user == null) {
+			throw new NullPointerException();
+		}
 		// get user data from rest api
 		User userData = new ObjectMapper().readValue(user, User.class);
 		// get product data from rest api
@@ -102,12 +116,16 @@ public class CartController {
 		cart.setCartItems(cartItems);
 		cartItem.setCart(cart);
 		cartService.save(cart);
-		return new ResponseEntity<List<Cart>>(cartService.findAll(), HttpStatus.OK);
+		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(false, userData.getId());
+		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
 	}
 
 	@PostMapping("/updateCart")
 	public ResponseEntity<List<Cart>> updateCart(@RequestParam("cart") String cart,
 			@RequestParam("quantity") String quantity) throws JsonParseException, JsonMappingException, IOException {
+		if (cart == null || quantity == null) {
+			throw new NullPointerException();
+		}
 		// get product data from rest api
 		Cart cartData = new ObjectMapper().readValue(cart, Cart.class);
 		int quan = new ObjectMapper().readValue(quantity, Integer.class);
@@ -123,58 +141,65 @@ public class CartController {
 		}
 		selectedcart.setCartItems(cartItems);
 		cartRepository.save(selectedcart);
-		List<Cart> carts = cartService.findByUserId(cartData.getUser().getId());
+		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(false, cartData.getUser().getId());
 		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/setUserOrder")
 	public ResponseEntity<Response> saveCart(@RequestParam("shippingAddress") String shippingAddress)
 			throws JsonParseException, JsonMappingException, IOException {
-		if (shippingAddress != null) {
-			// get product data from rest api
-			int quantity = 0 ;
-			ShippingAddress shippingAddressData = new ObjectMapper().readValue(shippingAddress, ShippingAddress.class);
-			shippingAddressData.setIsDefault(true);
-			shippingAddressRepository.save(shippingAddressData);
-			List<Cart> carts = cartService.findByUserId(shippingAddressData.getUser().getId());
-			double total = 0;
-			for (Cart cart : carts) {
-				for (CartItem cartItem : cart.getCartItems()) {
-					total += cartItem.getTotalPriceDouble() ;
-					Product product = productService.getProductById(cartItem.getProduct().getProductId()) ;
-					product.setQuantity(product.getQuantity() - 1);
-					productService.save(product) ;
-					quantity = product.getQuantity() ;
-				}
-				cart.setOrdered(true);
-				cart.setGrandTotal(total);
-				cartService.save(cart) ;
+		if (shippingAddress == null) {
+			throw new NullPointerException();
+		}
+		// get product data from rest api
+		int quantity = 0;
+		ShippingAddress shippingAddressData = new ObjectMapper().readValue(shippingAddress, ShippingAddress.class);
+		shippingAddressData.setIsDefault(true);
+		shippingAddressRepository.save(shippingAddressData);
+		List<Cart> carts = cartService.findByUserId(shippingAddressData.getUser().getId());
+		double total = 0;
+		for (Cart cart : carts) {
+			for (CartItem cartItem : cart.getCartItems()) {
+				total += cartItem.getTotalPriceDouble();
+				Product product = productService.getProductById(cartItem.getProduct().getProductId());
+				product.setQuantity(product.getQuantity() - 1);
+				productService.save(product);
+				quantity = product.getQuantity();
 			}
-			if (quantity >= 1) {
-				return new ResponseEntity<Response>(new Response("order is set Successfully"), HttpStatus.OK);
-			} else {
-				return null ;
-			}
+			cart.setOrdered(true);
+			cart.setGrandTotal(total);
+			cartService.save(cart);
+		}
+		if (quantity >= 1) {
+			return new ResponseEntity<Response>(new Response("order is set Successfully"), HttpStatus.OK);
 		} else {
 			return null;
 		}
 	}
 
-	@PostMapping("/deleteFromCart")
-	public ResponseEntity<List<Cart>> deleteFromCart(@RequestParam("cart") String cart,@RequestParam("user") String user)
-			throws JsonParseException, JsonMappingException, IOException {
+	@GetMapping("/deleteFromCart/{cart}")
+	public ResponseEntity<Response> deleteFromCart(@PathVariable("cart") Cart cart) throws JsonParseException, JsonMappingException, IOException {
 		// get product data from rest api
-		Cart cartData = new ObjectMapper().readValue(cart, Cart.class);
-		User userData = new ObjectMapper().readValue(user, User.class);
-		Cart selectedcart = cartService.findById(cartData.getCartId());
-		cartService.emptyCart(selectedcart);
-		List<Cart> carts = cartService.findByUserId(userData.getId());
-		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
+		if (cart == null) {
+			throw new NullPointerException();
+		}
+//		Cart cartData = new ObjectMapper().readValue(cart, Cart.class);
+//		User userData = new ObjectMapper().readValue(user, User.class);
+		Cart selectedcart = cartService.findById(cart.getCartId());
+		for (CartItem cartItem : selectedcart.getCartItems()) {
+			cartItemRepository.delete(cartItem);
+		}
+		cartRepository.delete(selectedcart);
+//		List<Cart> carts = cartService.findByUserId(userData.getId());
+		return new ResponseEntity<Response>(new Response("done"), HttpStatus.OK);
 	}
 
 	@PostMapping("/saveUserProductsCart")
 	public ResponseEntity<List<Cart>> saveUserProductsCart(@RequestParam("product") String product,
 			@RequestParam("user") String user) throws JsonParseException, JsonMappingException, IOException {
+		if (product == null || user == null) {
+			throw new NullPointerException();
+		}
 		// get user data from rest api
 		User userData = new ObjectMapper().readValue(user, User.class);
 		// get product data from rest api
