@@ -70,17 +70,6 @@ public class AdminUserProductController {
 		}
 	}
 
-	@PostMapping("/allUserProductsByCategory")
-	public ResponseEntity<List<UserProducts>> getProductsByCategory(@RequestBody Category category) {
-		if (category != null) {
-			Category categoryid = categoryService.getCategoryById(category.getCategoryId());
-			List<UserProducts> products = productService.getProductsByCategory(categoryid);
-			return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
-		} else {
-			return null;
-		}
-	}
-
 	@GetMapping("/getUserProductsById/{id}")
 	public ResponseEntity<List<UserProducts>> getUserProducts(@PathVariable("id") Long id) {
 		if (id != null) {
@@ -201,7 +190,7 @@ public class AdminUserProductController {
 		return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/userProductComment")
+	@PostMapping(value = "/addUserProductComment")
 	public ResponseEntity<List<ProductComment>> addProductComment(@RequestParam("product") String product,
 			@RequestParam("comment") String comment) throws JsonParseException, JsonMappingException, IOException {
 		if ((product != null) || (comment != null)) {

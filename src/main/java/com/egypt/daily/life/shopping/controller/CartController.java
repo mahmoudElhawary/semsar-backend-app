@@ -193,27 +193,4 @@ public class CartController {
 //		List<Cart> carts = cartService.findByUserId(userData.getId());
 		return new ResponseEntity<Response>(new Response("done"), HttpStatus.OK);
 	}
-
-	@PostMapping("/saveUserProductsCart")
-	public ResponseEntity<List<Cart>> saveUserProductsCart(@RequestParam("product") String product,
-			@RequestParam("user") String user) throws JsonParseException, JsonMappingException, IOException {
-		if (product == null || user == null) {
-			throw new NullPointerException();
-		}
-		// get user data from rest api
-		User userData = new ObjectMapper().readValue(user, User.class);
-		// get product data from rest api
-		UserProducts productData = new ObjectMapper().readValue(product, UserProducts.class);
-		List<CartItem> cartItems = new ArrayList<CartItem>();
-		CartItem cartItem = new CartItem();
-		cartItem.setUserProducts(productData);
-		cartItem.setTotalPriceDouble(productData.getProductPrice() * cartItem.getQuantity());
-		cartItems.add(cartItem);
-		Cart cart = new Cart();
-		cart.setUser(userData);
-		cart.setCartItems(cartItems);
-		cartItem.setCart(cart);
-		cartService.save(cart);
-		return new ResponseEntity<List<Cart>>(cartService.findAll(), HttpStatus.OK);
-	}
 }

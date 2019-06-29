@@ -84,7 +84,7 @@ public class AdminMainCategoryController {
 		return new ResponseEntity<List<MainCategory>>(mainCategories, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/deleteCategoryMain/{id}")
+	@GetMapping("/deleteCategoryMain/{id}")
 	public ResponseEntity<List<MainCategory>> deleteCategory2(@PathVariable("id") Long id) {
 		if (id != null) {
 			categoryService.delete(id);

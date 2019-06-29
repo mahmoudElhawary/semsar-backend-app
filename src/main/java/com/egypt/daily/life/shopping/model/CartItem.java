@@ -7,10 +7,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table
 public class CartItem {
 
     @Id
@@ -25,10 +27,6 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
-    
-    @ManyToOne
-    @JoinColumn(name = "userProductsId")
-    private UserProducts userProducts;
     
     private double totalPriceDouble;
 
@@ -73,14 +71,6 @@ public class CartItem {
 
 	public void setTotalPriceDouble(double totalPriceDouble) {
 		this.totalPriceDouble = totalPriceDouble;
-	}
-
-	public UserProducts getUserProducts() {
-		return userProducts;
-	}
-
-	public void setUserProducts(UserProducts userProducts) {
-		this.userProducts = userProducts;
 	}
 	
 }

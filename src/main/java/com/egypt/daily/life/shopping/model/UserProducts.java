@@ -16,11 +16,13 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table
 public class UserProducts {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -62,9 +64,10 @@ public class UserProducts {
     
     private String productCondition;
 
-    @OneToMany(mappedBy = "product")
+    
+    @OneToMany(mappedBy = "selectedUserProductsId")
     @JsonIgnore
-    private List<CartItem> cartItemList;
+    private List<SelectedUserProducts> selectedUserProducts;
 
     @OneToMany(mappedBy = "product",fetch = FetchType.EAGER)
     @JsonIgnore
@@ -209,14 +212,6 @@ public class UserProducts {
 		this.productCondition = productCondition;
 	}
 
-	public List<CartItem> getCartItemList() {
-		return cartItemList;
-	}
-
-	public void setCartItemList(List<CartItem> cartItemList) {
-		this.cartItemList = cartItemList;
-	}
-
 	public List<ProductComment> getProductCommentList() {
 		return productCommentList;
 	}
@@ -240,5 +235,14 @@ public class UserProducts {
 	public void setUserClass(User userClass) {
 		this.userClass = userClass;
 	}
+
+	public List<SelectedUserProducts> getSelectedUserProducts() {
+		return selectedUserProducts;
+	}
+
+	public void setSelectedUserProducts(List<SelectedUserProducts> selectedUserProducts) {
+		this.selectedUserProducts = selectedUserProducts;
+	}
+	
 	
 }

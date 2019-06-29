@@ -16,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table
 public class User implements Serializable{
 	/**
 	 * 
@@ -72,6 +74,10 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "userClass", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<UserProducts> userProducts;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<SelectedUserProducts> selectedUserProducts;
 
 	public Long getId() {
 		return id;
