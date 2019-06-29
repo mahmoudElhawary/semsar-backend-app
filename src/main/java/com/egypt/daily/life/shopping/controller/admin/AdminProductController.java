@@ -46,7 +46,7 @@ public class AdminProductController {
 	private ProductService productService;
 
 	@Autowired
-	private UserService userService ;
+	private UserService userService;
 	@Autowired
 	private CategoryService categoryService;
 
@@ -126,23 +126,23 @@ public class AdminProductController {
 
 			// save product data
 			productService.save(productData);
-			List<Product> products = productService.getAllProducts() ;
+			List<Product> products = productService.getAllProducts();
 			return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 		} else {
 			return null;
 		}
 	}
 
-	
 	@PostMapping("/updateProduct")
 	public ResponseEntity<List<Product>> updateProduct(@RequestParam("productFile") MultipartFile productFile,
-			@RequestParam("product") String product , @RequestParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam("product") String product, @RequestParam("id") String id)
+			throws JsonParseException, JsonMappingException, IOException {
 		if (product != null) {
 			// get product data from rest api
 			Product productData = new ObjectMapper().readValue(product, Product.class);
 			long proId = new ObjectMapper().readValue(id, Long.class);
-			
-			Product productDB = productService.getProductById(proId) ;
+
+			Product productDB = productService.getProductById(proId);
 			// get photo data from file to product class
 			if (productFile == null) {
 				productDB.setProductPhotoName(productData.getProductPhotoName());
@@ -151,7 +151,7 @@ public class AdminProductController {
 				productDB.setProductPhotoName(productFile.getOriginalFilename());
 				productDB.setProductPhoto(productFile.getBytes());
 			}
-			
+
 			productDB.setProductCategory(productData.getProductCategory());
 			productDB.setColor(productData.getColor());
 			productDB.setDefaultSize(productData.getDefaultSize());
@@ -166,20 +166,21 @@ public class AdminProductController {
 			productDB.setQuantity(productData.getQuantity());
 			// save product data
 			productService.save(productDB);
-			List<Product> products = productService.getAllProducts() ;
+			List<Product> products = productService.getAllProducts();
 			return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 		} else {
 			return null;
 		}
 	}
+
 	@GetMapping("/deleteProduct/{id}")
 	public ResponseEntity<List<Product>> deleteProduct(@PathVariable("id") Long id) {
 		if (id != null) {
 			productService.delete(id);
-			List<Product> products = productService.getAllProducts() ;
+			List<Product> products = productService.getAllProducts();
 			return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 		} else {
-			return null ;
+			return null;
 		}
 	}
 
@@ -246,11 +247,13 @@ public class AdminProductController {
 		List<Product> products = productService.findTop18ByOrderByProductCommentListDesc();
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
+
 	@GetMapping("/newestProducts")
 	public ResponseEntity<List<Product>> newestProducts() {
 		List<Product> products = productService.findTop18ByOrderByProductDateDesc();
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
+
 	@GetMapping("/maxProductsPrice")
 	public ResponseEntity<List<Product>> maxProductsPrice() {
 		List<Product> products = productService.findTop5ByOrderByProductPriceDesc();
@@ -262,14 +265,20 @@ public class AdminProductController {
 		List<Product> products = productService.findTop18ByOrderBySearchCountDesc();
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
+
 	@PostMapping(value = "/productComment")
 	public ResponseEntity<List<ProductComment>> addProductComment(@RequestParam("product") String product,
-			@RequestParam("comment") String comment ,@RequestParam("id") String idd) throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam("commentFile") MultipartFile commentFile, @RequestParam("comment") String comment,
+			@RequestParam("id") String idd) throws JsonParseException, JsonMappingException, IOException {
 		if ((product != null) || (comment != null)) {
 			Product productData = new ObjectMapper().readValue(product, Product.class);
 			ProductComment productComment = new ObjectMapper().readValue(comment, ProductComment.class);
-			long  id = new ObjectMapper().readValue(idd, Long.class);
+			long id = new ObjectMapper().readValue(idd, Long.class);
 			User user = userService.findOne(id);
+			if (commentFile == null) {
+				productComment.setCommentPhoto(null);
+			}
+			productComment.setCommentPhoto(commentFile.getBytes());
 			productComment.setCommentDate(new Date());
 			productComment.setUserId(user.getId());
 			productComment.setUser(user);
@@ -286,15 +295,15 @@ public class AdminProductController {
 	}
 
 	@PostMapping(value = "/productRating")
-	public ResponseEntity<Product> addproductRating(@RequestParam("product") String productRest , @RequestParam("rating") String rating)
-			throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Product> addproductRating(@RequestParam("product") String productRest,
+			@RequestParam("rating") String rating) throws JsonParseException, JsonMappingException, IOException {
 		if (productRest != null && rating != null) {
-			Product product = new ObjectMapper().readValue(productRest, Product.class) ;
-			 int rat = new ObjectMapper().readValue(rating, Integer.class) ;
-			int rate =Math.round((( rat +  product.getRating()) / 2 ));
+			Product product = new ObjectMapper().readValue(productRest, Product.class);
+			int rat = new ObjectMapper().readValue(rating, Integer.class);
+			int rate = Math.round(((rat + product.getRating()) / 2));
 			product.setRating(rate);
 			productRepository.save(product);
-			Product productResponse = productService.getProductById(product.getProductId()) ;
+			Product productResponse = productService.getProductById(product.getProductId());
 			return new ResponseEntity<Product>(productResponse, HttpStatus.OK);
 		} else {
 			return null;

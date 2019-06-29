@@ -25,6 +25,7 @@ import com.egypt.daily.life.shopping.repository.ProductCommentRepository;
 import com.egypt.daily.life.shopping.repository.UserProductRepository;
 import com.egypt.daily.life.shopping.service.CategoryService;
 import com.egypt.daily.life.shopping.service.UserProductService;
+import com.egypt.daily.life.shopping.service.UserService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +41,9 @@ public class AdminUserProductController {
 
 	@Autowired
 	private ProductCommentRepository productCommentRepository;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private UserProductRepository productRepository;
@@ -192,11 +196,20 @@ public class AdminUserProductController {
 
 	@PostMapping(value = "/addUserProductComment")
 	public ResponseEntity<List<ProductComment>> addProductComment(@RequestParam("product") String product,
-			@RequestParam("comment") String comment) throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam("comment") String comment, @RequestParam("commentFile") MultipartFile commentFile,
+			@RequestParam("id") String idd) throws JsonParseException, JsonMappingException, IOException {
 		if ((product != null) || (comment != null)) {
 			UserProducts productData = new ObjectMapper().readValue(product, UserProducts.class);
 			ProductComment productComment = new ObjectMapper().readValue(comment, ProductComment.class);
+			long id = new ObjectMapper().readValue(idd, Long.class);
+			User user = userService.findOne(id);
+			if (commentFile == null) {
+				productComment.setCommentPhoto(null);
+			}
+			productComment.setCommentPhoto(commentFile.getBytes());
 			productComment.setCommentDate(new Date());
+			productComment.setUserId(user.getId());
+			productComment.setUser(user);
 			productComment.setCommentCount(productComment.getCommentCount() + 1);
 			UserProducts productValue = productService.getProductById(productData.getUserProductsId());
 			productComment.setUserProducts(productValue);
@@ -227,13 +240,11 @@ public class AdminUserProductController {
 
 	@GetMapping("/userProductComments/{id}")
 	public ResponseEntity<List<ProductComment>> getproductComments(@PathVariable("id") Long id) {
-		if (id != null) {
-			UserProducts product = productService.getProductById(id);
-			List<ProductComment> comments = productCommentRepository.findAllByUserProducts(product);
-			return new ResponseEntity<List<ProductComment>>(comments, HttpStatus.OK);
-		} else {
-			return null;
+		if (id == null) {
+			throw new NullPointerException();
 		}
-
+		UserProducts product = productService.getProductById(id);
+		List<ProductComment> comments = productCommentRepository.findAllByUserProducts(product);
+		return new ResponseEntity<List<ProductComment>>(comments, HttpStatus.OK);
 	}
 }

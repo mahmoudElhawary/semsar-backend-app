@@ -2,6 +2,7 @@ package com.egypt.daily.life.shopping.model;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -30,6 +32,10 @@ public class ProductComment {
     
     private int commentStarts;
 
+    @Lob
+    @Basic(fetch=FetchType.EAGER)
+    private byte[]  commentPhoto ;
+    
     private long commentCount = 0 ;
     
     @Column(name="id")
@@ -120,5 +126,14 @@ public class ProductComment {
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
+
+	public byte[] getCommentPhoto() {
+		return commentPhoto;
+	}
+
+	public void setCommentPhoto(byte[] commentPhoto) {
+		this.commentPhoto = commentPhoto;
+	}
    
+	
 }
