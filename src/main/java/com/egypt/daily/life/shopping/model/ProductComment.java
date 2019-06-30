@@ -34,7 +34,7 @@ public class ProductComment {
 
     @Lob
     @Basic(fetch=FetchType.EAGER)
-    private byte[]  commentPhoto ;
+    private byte[] commentPhoto ;
     
     private long commentCount = 0 ;
     

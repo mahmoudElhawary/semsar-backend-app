@@ -27,6 +27,7 @@ import com.egypt.daily.life.shopping.model.Category;
 import com.egypt.daily.life.shopping.model.Product;
 import com.egypt.daily.life.shopping.model.ProductComment;
 import com.egypt.daily.life.shopping.model.User;
+import com.egypt.daily.life.shopping.model.UserProducts;
 import com.egypt.daily.life.shopping.repository.ProductCommentRepository;
 import com.egypt.daily.life.shopping.repository.ProductRepository;
 import com.egypt.daily.life.shopping.service.CategoryService;
@@ -268,16 +269,37 @@ public class AdminProductController {
 
 	@PostMapping(value = "/productComment")
 	public ResponseEntity<List<ProductComment>> addProductComment(@RequestParam("product") String product,
-			@RequestParam("commentFile") MultipartFile commentFile, @RequestParam("comment") String comment,
-			@RequestParam("id") String idd) throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam("comment") String comment, @RequestParam("id") String idd)
+			throws JsonParseException, JsonMappingException, IOException {
 		if ((product != null) || (comment != null)) {
 			Product productData = new ObjectMapper().readValue(product, Product.class);
 			ProductComment productComment = new ObjectMapper().readValue(comment, ProductComment.class);
 			long id = new ObjectMapper().readValue(idd, Long.class);
 			User user = userService.findOne(id);
-			if (commentFile == null) {
-				productComment.setCommentPhoto(null);
-			}
+			productComment.setCommentDate(new Date());
+			productComment.setUserId(user.getId());
+			productComment.setUser(user);
+			productComment.setCommentCount(productComment.getCommentCount() + 1);
+			Product productValue = productService.getProductById(productData.getProductId());
+			productComment.setProduct(productValue);
+			productCommentRepository.save(productComment);
+			Product productResponse = productService.getProductById(productData.getProductId());
+			List<ProductComment> comments = productCommentRepository.findAllByProduct(productResponse);
+			return new ResponseEntity<List<ProductComment>>(comments, HttpStatus.OK);
+		} else {
+			return null;
+		}
+	}
+
+	@PostMapping(value = "/addProductCommentPhoto")
+	public ResponseEntity<List<ProductComment>> addProductCommentPhoto(@RequestParam("product") String product,
+			@RequestParam("commentFile") MultipartFile commentFile, @RequestParam("id") String idd)
+			throws JsonParseException, JsonMappingException, IOException {
+		if (product != null) {
+			Product productData = new ObjectMapper().readValue(product, Product.class);
+			long id = new ObjectMapper().readValue(idd, Long.class);
+			User user = userService.findOne(id);
+			ProductComment productComment = new ProductComment();
 			productComment.setCommentPhoto(commentFile.getBytes());
 			productComment.setCommentDate(new Date());
 			productComment.setUserId(user.getId());

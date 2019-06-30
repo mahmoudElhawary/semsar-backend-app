@@ -18,7 +18,7 @@ public interface UserProductRepository extends CrudRepository<UserProducts, Long
 	
 	List<UserProducts> findTop12ByOrderByProductDateDesc();
 
-    List<UserProducts> findTop12ByOrderBySellCountDesc();
+    List<UserProducts> findTop12ByOrderBySelectedCountDesc();
 
     List<UserProducts> findTop12ByOrderByProductCommentListCommentCountDesc();
     

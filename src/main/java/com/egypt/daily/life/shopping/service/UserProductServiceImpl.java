@@ -134,8 +134,8 @@ public class UserProductServiceImpl implements UserProductService{
 	}
 
 	@Override
-	public List<UserProducts> findTop12ByOrderBySellCountDesc() {
-		return productRepository.findTop12ByOrderBySellCountDesc();
+	public List<UserProducts> findTop12ByOrderBySelectedCountDesc() {
+		return productRepository.findTop12ByOrderBySelectedCountDesc();
 	}
 
 	@Override

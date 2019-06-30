@@ -48,7 +48,7 @@ public class UserProducts {
     private int rating ;  
     
     @Column(name = "sellCount", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long sellCount = 0 ;
+    private long selectedCount = 0 ;
     
     private String productSummary;
         
@@ -152,18 +152,6 @@ public class UserProducts {
 		this.rating = rating;
 	}
 
-	public void setSellCount(long sellCount) {
-		this.sellCount = sellCount;
-	}
-
-	public Long getSellCount() {
-		return sellCount;
-	}
-
-	public void setSellCount(Long sellCount) {
-		this.sellCount = sellCount;
-	}
-
 	public String getProductSummary() {
 		return productSummary;
 	}
@@ -242,6 +230,14 @@ public class UserProducts {
 
 	public void setSelectedUserProducts(List<SelectedUserProducts> selectedUserProducts) {
 		this.selectedUserProducts = selectedUserProducts;
+	}
+
+	public long getSelectedCount() {
+		return selectedCount;
+	}
+
+	public void setSelectedCount(long selectedCount) {
+		this.selectedCount = selectedCount;
 	}
 	
 	

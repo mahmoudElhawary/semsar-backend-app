@@ -32,7 +32,7 @@ public interface UserProductService {
  
 	List<UserProducts> findTop12ByOrderByProductDateDesc();
 
-    List<UserProducts> findTop12ByOrderBySellCountDesc();
+    List<UserProducts> findTop12ByOrderBySelectedCountDesc();
 
     List<UserProducts> findTop12ByOrderByProductCommentListCommentCountDesc();
     

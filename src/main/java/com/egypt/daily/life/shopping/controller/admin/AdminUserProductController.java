@@ -170,12 +170,6 @@ public class AdminUserProductController {
 		return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
 	}
 
-	@GetMapping("/maxSellingUserProducts")
-	public ResponseEntity<List<UserProducts>> maxSellingProducts() {
-		List<UserProducts> products = productService.findTop12ByOrderBySellCountDesc();
-		return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
-	}
-
 	@GetMapping("/maxViewUserProducts")
 	public ResponseEntity<List<UserProducts>> maxViewProducts() {
 		List<UserProducts> products = productService.findTop12ByOrderByProductViewsDesc();
@@ -193,19 +187,45 @@ public class AdminUserProductController {
 		List<UserProducts> products = productService.findTop12ByOrderByProductDateDesc();
 		return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
 	}
+	@GetMapping("/maxSelectedProducts")
+	public ResponseEntity<List<UserProducts>> maxSelectedProducts() {
+		List<UserProducts> products = productService.findTop12ByOrderBySelectedCountDesc();
+		return new ResponseEntity<List<UserProducts>>(products, HttpStatus.OK);
+	}
 
 	@PostMapping(value = "/addUserProductComment")
 	public ResponseEntity<List<ProductComment>> addProductComment(@RequestParam("product") String product,
-			@RequestParam("comment") String comment, @RequestParam("commentFile") MultipartFile commentFile,
-			@RequestParam("id") String idd) throws JsonParseException, JsonMappingException, IOException {
-		if ((product != null) || (comment != null)) {
+			@RequestParam("comment") String comment, @RequestParam("id") String idd)
+			throws JsonParseException, JsonMappingException, IOException {
+		if (product != null) {
 			UserProducts productData = new ObjectMapper().readValue(product, UserProducts.class);
 			ProductComment productComment = new ObjectMapper().readValue(comment, ProductComment.class);
 			long id = new ObjectMapper().readValue(idd, Long.class);
 			User user = userService.findOne(id);
-			if (commentFile == null) {
-				productComment.setCommentPhoto(null);
-			}
+			productComment.setCommentDate(new Date());
+			productComment.setUserId(user.getId());
+			productComment.setUser(user);
+			productComment.setCommentCount(productComment.getCommentCount() + 1);
+			UserProducts productValue = productService.getProductById(productData.getUserProductsId());
+			productComment.setUserProducts(productValue);
+			productCommentRepository.save(productComment);
+			UserProducts productResponse = productService.getProductById(productData.getUserProductsId());
+			List<ProductComment> comments = productCommentRepository.findAllByUserProducts(productResponse);
+			return new ResponseEntity<List<ProductComment>>(comments, HttpStatus.OK);
+		} else {
+			return null;
+		}
+	}
+
+	@PostMapping(value = "/addUserProductCommentPhoto")
+	public ResponseEntity<List<ProductComment>> addProductCommentPhoto(@RequestParam("product") String product,
+			@RequestParam("commentFile") MultipartFile commentFile, @RequestParam("id") String idd)
+			throws JsonParseException, JsonMappingException, IOException {
+		if (product != null) {
+			UserProducts productData = new ObjectMapper().readValue(product, UserProducts.class);
+			long id = new ObjectMapper().readValue(idd, Long.class);
+			User user = userService.findOne(id);
+			ProductComment productComment = new ProductComment();
 			productComment.setCommentPhoto(commentFile.getBytes());
 			productComment.setCommentDate(new Date());
 			productComment.setUserId(user.getId());
