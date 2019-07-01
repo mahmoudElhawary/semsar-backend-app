@@ -36,6 +36,9 @@ public class User implements Serializable{
 	private String email;
 	private String gender;
 	
+	private String profilePrivacy ;
+	
+	private String phoneNumber;
 	@Lob
     @Basic(fetch=FetchType.EAGER)
     private byte[]  userPhoto ;
@@ -230,5 +233,30 @@ public class User implements Serializable{
 	public void setAge(Long age) {
 		this.age = age;
 	}
+
+	public String getProfilePrivacy() {
+		return profilePrivacy;
+	}
+
+	public void setProfilePrivacy(String profilePrivacy) {
+		this.profilePrivacy = profilePrivacy;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public List<SelectedUserProducts> getSelectedUserProducts() {
+		return selectedUserProducts;
+	}
+
+	public void setSelectedUserProducts(List<SelectedUserProducts> selectedUserProducts) {
+		this.selectedUserProducts = selectedUserProducts;
+	}
+	
 	
 }

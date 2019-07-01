@@ -1,4 +1,4 @@
-	package com.egypt.daily.life.shopping.model;
+package com.egypt.daily.life.shopping.model;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -23,97 +23,121 @@ import javax.validation.constraints.Min;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 @Entity
 @Table
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class Product implements  Comparable<Product>{
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Product implements Comparable<Product> {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long productId; // MySQL only accept Long or integer ID, can't be String type
-    @Column(unique=true , name="productName")
-    @OrderBy("productName asc")
-    private String productName;
-    
-    private String size;
-    
-    private String defaultSize ;
-    
-    private String color;
-    
-    private int quantity; 
-    
-    @Lob
-    @Basic(fetch=FetchType.EAGER)
-    private byte[]  productPhoto ;
-    
-    private String productPhotoName; 
-    
-    private int rating ;  
-    
-    @Column(name = "sellCount", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long sellCount = 0 ;
-    
-    @Column(name = "searchCount", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long searchCount = 0 ;
-    
-    private Boolean isSlider ;
-    
-    private String productSummary;
-        
-    private String productDescription;
-    
-    private Date productDate;
-    
-    @Column(name = "productViews", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long productViews = 0;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long productId; // MySQL only accept Long or integer ID, can't be String type
+	@OrderBy("productName asc")
+	private String productName;
 
-    @Min(value = 0, message = "Product price must no be less then zero.")
-    private double productPrice;
-    
-    private String productCondition;
+	private String size;
 
-    @OneToMany(mappedBy = "product")
-    @JsonIgnore
-    private List<CartItem> cartItemList;
+	private String defaultSize;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<ProductComment> productCommentList;
-    
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoryId")
-    private Category productCategory;
+	private String color;
 
-    /******************* Comparator ************************/
-    @Override
-	public int compareTo(Product product){
+	private int quantity;
+
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	private byte[] productPhoto;
+
+	private String productPhotoName;
+
+	private int rating;
+
+	@Column(name = "sellCount", nullable = false, columnDefinition = "bigint(20) default 0")
+	private long sellCount = 0;
+
+	@Column(name = "searchCount", nullable = false, columnDefinition = "bigint(20) default 0")
+	private long searchCount = 0;
+
+	private Boolean isSlider;
+
+	private String productSummary;
+
+	private String productDescription;
+
+	private Date productDate;
+
+	private String Auther;
+
+	private Date publishedDate; 
+	
+	private String powercapacity;
+
+	private String processor;
+
+	private String space;
+
+	private String ram;
+
+	private String type;
+
+	private int age;
+
+	@Column(name = "productViews", nullable = false, columnDefinition = "bigint(20) default 0")
+	private long productViews = 0;
+
+	@Min(value = 0, message = "Product price must no be less then zero.")
+	private double productPrice;
+
+	private String productCondition;
+
+	@OneToMany(mappedBy = "product")
+	@JsonIgnore
+	private List<CartItem> cartItemList;
+
+	@OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+	@JsonIgnore
+	private List<ProductComment> productCommentList;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "categoryId")
+	private Category productCategory;
+
+	/******************* Comparator ************************/
+	@Override
+	public int compareTo(Product product) {
 		return new Double(this.getProductPrice()).compareTo(product.getProductPrice());
 	}
-    
-    public static class Comparators {
-    	public static Comparator<Product> PRICE = new Comparator<Product>(){
-    		@Override
-    		public int compare(Product p1, Product p2){
-    			return new Double(p1.getProductPrice()).compareTo(p2.getProductPrice());
-    		}
-    	};
-    	public static Comparator<Product> VIEWS = new Comparator<Product>(){
-    		@Override
-    		public int compare(Product p1, Product p2){
-    			return new Long(p1.getProductViews()).compareTo(p2.getProductViews());
-    		}
-    	};
-    	public static Comparator<Product> DATE = new Comparator<Product>(){
-    		@Override
-    		public int compare(Product p1, Product p2){
-    			return (p1.getProductDate().after(p2.getProductDate())) ? 0:1;
-    		}
-    	};
-    }
-    /******************* Getter/Setter ************************/
+
+	public static class Comparators {
+		public static Comparator<Product> PRICE = new Comparator<Product>() {
+			@Override
+			public int compare(Product p1, Product p2) {
+				return new Double(p1.getProductPrice()).compareTo(p2.getProductPrice());
+			}
+		};
+		public static Comparator<Product> VIEWS = new Comparator<Product>() {
+			@Override
+			public int compare(Product p1, Product p2) {
+				return new Long(p1.getProductViews()).compareTo(p2.getProductViews());
+			}
+		};
+		public static Comparator<Product> DATE = new Comparator<Product>() {
+			@Override
+			public int compare(Product p1, Product p2) {
+				return (p1.getProductDate().after(p2.getProductDate())) ? 0 : 1;
+			}
+		};
+	}
+
+	/******************* Getter/Setter ************************/
+	
 	public Long getProductId() {
 		return productId;
+	}
+
+	public Date getPublishedDate() {
+		return publishedDate;
+	}
+
+	public void setPublishedDate(Date publishedDate) {
+		this.publishedDate = publishedDate;
 	}
 
 	public void setProductId(Long productId) {
@@ -127,7 +151,7 @@ public class Product implements  Comparable<Product>{
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	
+
 	public String getDefaultSize() {
 		return defaultSize;
 	}
@@ -215,6 +239,7 @@ public class Product implements  Comparable<Product>{
 	public void setSize(String size) {
 		this.size = size;
 	}
+
 	public String getColor() {
 		return color;
 	}
@@ -234,7 +259,7 @@ public class Product implements  Comparable<Product>{
 	public int getRating() {
 		return rating;
 	}
-	
+
 	public void setRating(int rating) {
 		this.rating = rating;
 	}
@@ -282,5 +307,61 @@ public class Product implements  Comparable<Product>{
 	public void setSearchCount(long searchCount) {
 		this.searchCount = searchCount;
 	}
-	
+
+	public String getAuther() {
+		return Auther;
+	}
+
+	public void setAuther(String auther) {
+		Auther = auther;
+	}
+
+	public String getPowercapacity() {
+		return powercapacity;
+	}
+
+	public void setPowercapacity(String powercapacity) {
+		this.powercapacity = powercapacity;
+	}
+
+	public String getProcessor() {
+		return processor;
+	}
+
+	public void setProcessor(String processor) {
+		this.processor = processor;
+	}
+
+	public String getSpace() {
+		return space;
+	}
+
+	public void setSpace(String space) {
+		this.space = space;
+	}
+
+	public String getRam() {
+		return ram;
+	}
+
+	public void setRam(String ram) {
+		this.ram = ram;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
 }

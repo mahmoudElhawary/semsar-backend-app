@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.egypt.daily.life.shopping.domain.Response;
 import com.egypt.daily.life.shopping.model.MainCategory;
 import com.egypt.daily.life.shopping.repository.MainCategoryRepository;
 import com.egypt.daily.life.shopping.service.MainCategoryService;
@@ -84,12 +85,12 @@ public class AdminMainCategoryController {
 		return new ResponseEntity<List<MainCategory>>(mainCategories, HttpStatus.OK);
 	}
 
-	@GetMapping("/deleteCategoryMain/{id}")
-	public ResponseEntity<List<MainCategory>> deleteCategory2(@PathVariable("id") Long id) {
+	@GetMapping("/deleteCategoryMain2/{id}")
+	public ResponseEntity<Response> deleteCategory2(@PathVariable("id") Long id) {
 		if (id != null) {
-			categoryService.delete(id);
-			List<MainCategory> mainCategories = categoryService.getAllCategory();
-			return new ResponseEntity<List<MainCategory>>(mainCategories, HttpStatus.OK);
+			MainCategory category = categoryService.getCategoryById(id);
+			mainCategoryRepository.delete(category);
+			return new ResponseEntity<Response>(new Response("this Category deleted successfully"), HttpStatus.OK);
 		} else {
 			return null;
 		}

@@ -121,7 +121,7 @@ public class CartController {
 	}
 
 	@PostMapping("/updateCart")
-	public ResponseEntity<List<Cart>> updateCart(@RequestParam("cart") String cart,
+	public ResponseEntity<Response> updateCart(@RequestParam("cart") String cart,
 			@RequestParam("quantity") String quantity) throws JsonParseException, JsonMappingException, IOException {
 		if (cart == null || quantity == null) {
 			throw new NullPointerException();
@@ -136,13 +136,11 @@ public class CartController {
 			cartItem.setTotalPriceDouble(cartItem.getProduct().getProductPrice() * cartItem.getQuantity());
 			cartItem.setCart(selectedcart);
 			cartItems.add(cartItem);
-
 			cartItemRepository.save(cartItem);
 		}
 		selectedcart.setCartItems(cartItems);
 		cartRepository.save(selectedcart);
-		List<Cart> carts = cartService.findAllByIsOrderedAndUserId(false, cartData.getUser().getId());
-		return new ResponseEntity<List<Cart>>(carts, HttpStatus.OK);
+		return new ResponseEntity<Response>(new Response("this Cart Updated Successfully"), HttpStatus.OK);
 	}
 
 	@PostMapping("/setUserOrder")
@@ -177,20 +175,20 @@ public class CartController {
 		}
 	}
 
-	@GetMapping("/deleteFromCart/{cart}")
-	public ResponseEntity<Response> deleteFromCart(@PathVariable("cart") Cart cart) throws JsonParseException, JsonMappingException, IOException {
+	@GetMapping("/deleteFromCart/{id}")
+	public ResponseEntity<Response> deleteFromCart(@PathVariable("id") Long id) throws JsonParseException, JsonMappingException, IOException {
 		// get product data from rest api
-		if (cart == null) {
+		if (id == null) {
 			throw new NullPointerException();
 		}
 //		Cart cartData = new ObjectMapper().readValue(cart, Cart.class);
 //		User userData = new ObjectMapper().readValue(user, User.class);
-		Cart selectedcart = cartService.findById(cart.getCartId());
+		Cart selectedcart = cartService.findById(id);
 		for (CartItem cartItem : selectedcart.getCartItems()) {
 			cartItemRepository.delete(cartItem);
 		}
 		cartRepository.delete(selectedcart);
 //		List<Cart> carts = cartService.findByUserId(userData.getId());
-		return new ResponseEntity<Response>(new Response("done"), HttpStatus.OK);
+		return new ResponseEntity<Response>(new Response("this Cart Deleted Successfully"), HttpStatus.OK);
 	}
 }

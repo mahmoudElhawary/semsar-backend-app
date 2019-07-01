@@ -152,8 +152,6 @@ public class ProductServiceImpl implements ProductService {
 
 	public Product getProductById(Long productId) {
 		Product product = productRepository.findById(productId).get();
-		product.setProductViews(product.getProductViews() + 1);
-		productRepository.save(product);
 		return product;
 	}
 

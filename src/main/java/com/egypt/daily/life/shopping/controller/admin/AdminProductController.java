@@ -189,6 +189,8 @@ public class AdminProductController {
 	public ResponseEntity<Product> getProduct(@PathVariable("id") Long id) {
 		if (id != null) {
 			Product productDB = productService.getProductById(id);
+			productDB.setProductViews(productDB.getProductViews() + 1);
+			productRepository.save(productDB);
 			return new ResponseEntity<Product>(productDB, HttpStatus.OK);
 		} else {
 			return null;

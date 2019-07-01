@@ -15,7 +15,6 @@ public class MainCategory {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
-
     private String mainCategoryName;
     private String subCategoryName;
     private Date createdDate ;

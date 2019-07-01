@@ -25,61 +25,75 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table
 public class UserProducts {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long userProductsId ;
-	@Column(unique=true , name="productName")
-    @OrderBy("productName asc")
-    private String productName;
-    
-    private String size;
-    
-    private String defaultSize ;
-    
-    private String color;
-    
-    private String quantity; 
-    
-    @Lob
-    @Basic(fetch=FetchType.EAGER)
-    private byte[]  productPhoto ;
-    
-    private String productPhotoName; 
-    
-    private int rating ;  
-    
-    @Column(name = "sellCount", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long selectedCount = 0 ;
-    
-    private String productSummary;
-        
-    private String productDescription;
-    
-    private Date productDate;
-    
-    @Column(name = "productViews", nullable = false, columnDefinition = "bigint(20) default 0")
-    private long productViews = 0;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long userProductsId;
+	@OrderBy("productName asc")
+	private String productName;
 
-    @Min(value = 0, message = "Product price must no be less then zero.")
-    private double productPrice;
-    
-    private String productCondition;
+	private String size;
 
-    
-    @OneToMany(mappedBy = "selectedUserProductsId")
-    @JsonIgnore
-    private List<SelectedUserProducts> selectedUserProducts;
+	private String defaultSize;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<ProductComment> productCommentList;
-    
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoryId")
-    private Category productCategory;
+	private String color;
 
-    @ManyToOne
-    private User userClass;
-    
+	private String quantity;
+
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	private byte[] productPhoto;
+
+	private String productPhotoName;
+
+	private int rating;
+
+	@Column(name = "sellCount", nullable = false, columnDefinition = "bigint(20) default 0")
+	private long selectedCount = 0;
+
+	private String productSummary;
+
+	private String productDescription;
+
+	private Date productDate;
+
+	private String Auther;
+
+	private Date publishedDate;
+	
+	private String powercapacity;
+
+	private String processor;
+
+	private String space;
+
+	private String ram;
+
+	private String type;
+
+	private int age;
+
+	@Column(name = "productViews", nullable = false, columnDefinition = "bigint(20) default 0")
+	private long productViews = 0;
+
+	@Min(value = 0, message = "Product price must no be less then zero.")
+	private double productPrice;
+
+	private String productCondition;
+
+	@OneToMany(mappedBy = "selectedUserProductsId")
+	@JsonIgnore
+	private List<SelectedUserProducts> selectedUserProducts;
+
+	@OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+	@JsonIgnore
+	private List<ProductComment> productCommentList;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "categoryId")
+	private Category productCategory;
+
+	@ManyToOne
+	private User userClass;
+
 	public Long getUserProductsId() {
 		return userProductsId;
 	}
@@ -95,7 +109,7 @@ public class UserProducts {
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	
+
 	public String getSize() {
 		return size;
 	}
@@ -143,7 +157,7 @@ public class UserProducts {
 	public void setProductPhotoName(String productPhotoName) {
 		this.productPhotoName = productPhotoName;
 	}
-	
+
 	public int getRating() {
 		return rating;
 	}
@@ -152,6 +166,14 @@ public class UserProducts {
 		this.rating = rating;
 	}
 
+	public Date getPublishedDate() {
+		return publishedDate;
+	}
+
+	public void setPublishedDate(Date publishedDate) {
+		this.publishedDate = publishedDate;
+	}
+	
 	public String getProductSummary() {
 		return productSummary;
 	}
@@ -239,6 +261,61 @@ public class UserProducts {
 	public void setSelectedCount(long selectedCount) {
 		this.selectedCount = selectedCount;
 	}
-	
-	
+
+	public String getAuther() {
+		return Auther;
+	}
+
+	public void setAuther(String auther) {
+		Auther = auther;
+	}
+
+	public String getPowercapacity() {
+		return powercapacity;
+	}
+
+	public void setPowercapacity(String powercapacity) {
+		this.powercapacity = powercapacity;
+	}
+
+	public String getProcessor() {
+		return processor;
+	}
+
+	public void setProcessor(String processor) {
+		this.processor = processor;
+	}
+
+	public String getSpace() {
+		return space;
+	}
+
+	public void setSpace(String space) {
+		this.space = space;
+	}
+
+	public String getRam() {
+		return ram;
+	}
+
+	public void setRam(String ram) {
+		this.ram = ram;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
 }
