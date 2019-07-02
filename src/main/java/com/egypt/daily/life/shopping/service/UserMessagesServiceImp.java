@@ -11,13 +11,13 @@ import com.egypt.daily.life.shopping.model.UserMessages;
 import com.egypt.daily.life.shopping.repository.UserMessagesRepository;
 
 @Service
+@Transactional
 public class UserMessagesServiceImp implements UserMessagesService{
 
 	@Autowired
 	private UserMessagesRepository userMessagesRepository ;
 	@Override
 	public List<UserMessages> findAll() {
-
 		return (List<UserMessages>) userMessagesRepository.findAll();
 	}
 
@@ -27,38 +27,32 @@ public class UserMessagesServiceImp implements UserMessagesService{
 	}
 
 	@Override
-	public UserMessages save(UserMessages messages) {
-		return userMessagesRepository.save(messages);
-	}
-
-	@Override
-	public UserMessages findById(Long id) {
-		return userMessagesRepository.findById(id).get();
-	}
-
-	@Override
 	public void deleteAll() {
 		userMessagesRepository.deleteAll();
 	}
 
 	@Override
-	public List<UserMessages> findAllByUserIdOrderByMessageDateDesc(Long id) {
+	public List<UserMessages> findAllByUserId(Long id) {
 		return userMessagesRepository.findAllByUserIdOrderByMessageDateDesc(id);
 	}
 
 	@Override
-	public List<UserMessages> findAllBySenderIdOrderByMessageDateDesc(Long id) {
+	public List<UserMessages> findAllBySenderId(Long id) {
 		return userMessagesRepository.findAllBySenderIdOrderByMessageDateDesc(id);
 	}
 
 	@Override
-	public List<UserMessages> findAllByUserIdAndSenderIdOrderByMessageDateDesc(Long userId, Long senderId) {
-		return userMessagesRepository.findByUserIdAndSenderIdOrderByMessageDateDesc(userId, senderId);
+	public List<UserMessages> findAllByUserIdAndSenderId(Long userId, Long senderId) {
+		return userMessagesRepository.findAllByUserIdAndSenderIdOrderByMessageDateDesc(userId, senderId);
 	}
 
 	@Override
-	public List<UserMessages> findAllBySenderIdAndUserIdOrderByMessageDateDesc(Long senderId, Long userId) {
-		return userMessagesRepository.findBySenderIdAndUserIdOrderByMessageDateDesc(senderId, userId);
+	public UserMessages save(UserMessages messages) {
+		return userMessagesRepository.save(messages);
 	}
 
+	@Override
+	public UserMessages findById(Long id) {	
+		return userMessagesRepository.findById(id).get();
+	}
 }

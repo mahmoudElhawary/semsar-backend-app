@@ -11,14 +11,12 @@ public interface UserMessagesService {
 	void delete(Long id) ;
 	
 	void deleteAll() ;
+
+	List<UserMessages> findAllByUserId(Long id) ;
 	
-	List<UserMessages> findAllByUserIdOrderByMessageDateDesc(Long id) ;
+	List<UserMessages> findAllBySenderId(Long id) ;
 	
-	List<UserMessages> findAllBySenderIdOrderByMessageDateDesc(Long id) ;
-	
-	List<UserMessages> findAllByUserIdAndSenderIdOrderByMessageDateDesc(Long userId , Long senderId) ; 
-	
-	List<UserMessages> findAllBySenderIdAndUserIdOrderByMessageDateDesc( Long senderId,Long userId) ;
+	List<UserMessages> findAllByUserIdAndSenderId(Long userId , Long senderId) ;
 	
 	UserMessages save(UserMessages messages) ;
 	

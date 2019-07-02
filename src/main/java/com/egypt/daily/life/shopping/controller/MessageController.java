@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.egypt.daily.life.shopping.domain.Response;
 import com.egypt.daily.life.shopping.model.User;
@@ -38,7 +39,7 @@ public class MessageController {
 	}
 
 	@PostMapping("/sendMessage")
-	public ResponseEntity<List<UserMessages>> updateProduct(@RequestParam("message") String message,
+	public ResponseEntity<List<UserMessages>> sendMessage(@RequestParam("message") String message,
 			@RequestParam("user") String user, @RequestParam("id") String id)
 			throws JsonParseException, JsonMappingException, IOException {
 		if (message != null) {
@@ -46,49 +47,55 @@ public class MessageController {
 			UserMessages messageData = new ObjectMapper().readValue(message, UserMessages.class);
 			long proId = new ObjectMapper().readValue(id, Long.class);
 			User receiver = userService.findOne(proId);
-			User sender = new ObjectMapper().readValue(user, User.class);
+			User userData = new ObjectMapper().readValue(user, User.class);
 
 			messageData.setMessageDate(new Date());
-			messageData.setSenderId(sender.getId());
+			messageData.setSenderId(userData.getId());
+//			messageData.setMessageFrom(userData);
 			messageData.setUser(receiver);
-
 			userMessagesService.save(messageData);
-			List<UserMessages> messages = userMessagesService
-					.findAllByUserIdAndSenderIdOrderByMessageDateDesc(sender.getId(), receiver.getId());
+			List<UserMessages> messages = userMessagesService.findAllByUserIdAndSenderId(receiver.getId(),
+					userData.getId());
 			return new ResponseEntity<List<UserMessages>>(messages, HttpStatus.OK);
 		} else {
 			return null;
 		}
 	}
-
-	@PostMapping("/getMessagesToThisSender")
-	public ResponseEntity<List<UserMessages>> getMessagesToThisSender(@RequestParam("user") String user,
-			@RequestParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
-		if (user != null) {
+	
+	@PostMapping("/sendMessagePhoto")
+	public ResponseEntity<List<UserMessages>> sendMessagePhoto(@RequestParam("messageFile") MultipartFile messageFile,
+			@RequestParam("user") String user, @RequestParam("id") String id)
+			throws JsonParseException, JsonMappingException, IOException {
+		if (messageFile != null) {
 			// get product data from rest api
 			long proId = new ObjectMapper().readValue(id, Long.class);
 			User receiver = userService.findOne(proId);
-			User sender = new ObjectMapper().readValue(user, User.class);
-
-			List<UserMessages> messages = userMessagesService
-					.findAllBySenderIdAndUserIdOrderByMessageDateDesc(receiver.getId(), sender.getId());
+			User userData = new ObjectMapper().readValue(user, User.class);
+			UserMessages messageData = new UserMessages() ;
+			messageData.setMessageDate(new Date());
+			messageData.setSenderId(userData.getId());
+			messageData.setMessagePhoto(messageFile.getBytes());
+			messageData.setUser(receiver);
+			userMessagesService.save(messageData);
+			List<UserMessages> messages = userMessagesService.findAllByUserIdAndSenderId(receiver.getId(),
+					userData.getId());
 			return new ResponseEntity<List<UserMessages>>(messages, HttpStatus.OK);
 		} else {
 			return null;
 		}
 	}
 
-	@PostMapping("/getMessagesFromThisSender")
+	@PostMapping("/getMessages")
 	public ResponseEntity<List<UserMessages>> getMessagesFromThisSender(@RequestParam("user") String user,
 			@RequestParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
 		if (user != null) {
 			// get product data from rest api
 			long proId = new ObjectMapper().readValue(id, Long.class);
 			User receiver = userService.findOne(proId);
-			User sender = new ObjectMapper().readValue(user, User.class);
+			User userData = new ObjectMapper().readValue(user, User.class);
 
-			List<UserMessages> messages = userMessagesService
-					.findAllBySenderIdAndUserIdOrderByMessageDateDesc(receiver.getId(), sender.getId());
+			List<UserMessages> messages = userMessagesService.findAllByUserIdAndSenderId(receiver.getId(),
+					userData.getId());
 			return new ResponseEntity<List<UserMessages>>(messages, HttpStatus.OK);
 		} else {
 			return null;
@@ -98,7 +105,7 @@ public class MessageController {
 	@GetMapping("/findAllBySenderId/{id}")
 	public ResponseEntity<List<UserMessages>> findAllBySenderId(@PathVariable("id") Long id) {
 		if (id != null) {
-			List<UserMessages> messages = userMessagesService.findAllBySenderIdOrderByMessageDateDesc(id);
+			List<UserMessages> messages = userMessagesService.findAllBySenderId(id);
 			return new ResponseEntity<List<UserMessages>>(messages, HttpStatus.OK);
 		} else {
 			return null;
@@ -108,7 +115,7 @@ public class MessageController {
 	@GetMapping("/findAllByUserId/{id}")
 	public ResponseEntity<List<UserMessages>> findAllByUserId(@PathVariable("id") Long id) {
 		if (id != null) {
-			List<UserMessages> messages = userMessagesService.findAllByUserIdOrderByMessageDateDesc(id);
+			List<UserMessages> messages = userMessagesService.findAllByUserId(id);
 			return new ResponseEntity<List<UserMessages>>(messages, HttpStatus.OK);
 		} else {
 			return null;

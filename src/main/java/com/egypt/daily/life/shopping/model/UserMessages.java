@@ -3,11 +3,14 @@ package com.egypt.daily.life.shopping.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,6 +28,9 @@ public class UserMessages implements Serializable{
 	private Long userMessagesId ;
 	private String messages ;
 	private Long senderId ;
+	@Lob
+    @Basic(fetch=FetchType.EAGER)
+    private byte[]  messagePhoto ;
 	private Date messageDate;
 	@ManyToOne
     @JoinColumn(name = "id")
@@ -70,6 +76,14 @@ public class UserMessages implements Serializable{
 
 	public void setSenderId(Long senderId) {
 		this.senderId = senderId;
+	}
+
+	public byte[] getMessagePhoto() {
+		return messagePhoto;
+	}
+
+	public void setMessagePhoto(byte[] messagePhoto) {
+		this.messagePhoto = messagePhoto;
 	}
 	
 }
