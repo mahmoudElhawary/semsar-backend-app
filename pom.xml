@@ -4,13 +4,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.egypt.daily.life.shopping</groupId>
-	<artifactId>egypt.daily.life.shopping</artifactId>
+	<groupId>com.elhawary.semsar</groupId>
+	<artifactId>elhawary.semsar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>EgyptDailyLifeShopping</name>
-	<description>Egypt Daily Life Shopping Application</description>
+	<name>semsar-app</name>
+	<description>any place you look for you can found it here</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
