@@ -24,18 +24,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BuildingAddressDBController {
 
 	@Autowired
-	private BuildingAddressDBService buildingAddressDBService ;
-	
+	private BuildingAddressDBService buildingAddressDBService;
+
+	@GetMapping("/getAllBuildingAddress")
+	public ResponseEntity<List<BuildingAddressDB>> getAllBuildingAddress() {
+		List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.getAllBuildingAddress();
+		return new ResponseEntity<List<BuildingAddressDB>>(buildingAddressDBs, HttpStatus.OK);
+	}
+
 	@GetMapping("/getAllMainGovernorate")
 	public ResponseEntity<List<String>> getAllMainGovernorate() {
-		List<String> buildingAddressDBs = buildingAddressDBService.getAllMainGovernorate() ;
+		List<String> buildingAddressDBs = buildingAddressDBService.getAllMainGovernorate();
 		return new ResponseEntity<List<String>>(buildingAddressDBs, HttpStatus.OK);
 	}
+
 	@GetMapping("/getAllSubGovernorate")
 	public ResponseEntity<List<String>> getAllSubGovernorate() {
-		List<String> buildingAddressDBs = buildingAddressDBService.getAllSubGovernorate() ;
+		List<String> buildingAddressDBs = buildingAddressDBService.getAllSubGovernorate();
 		return new ResponseEntity<List<String>>(buildingAddressDBs, HttpStatus.OK);
 	}
+
 	@GetMapping("/getAllNeighborhood")
 	public ResponseEntity<List<String>> getAllNeighborhood() {
 		List<String> buildingAddressDBs = buildingAddressDBService.getAllNeighborhood();
@@ -44,21 +52,22 @@ public class BuildingAddressDBController {
 
 	@PostMapping("/findAllByMainGovernorate")
 	public ResponseEntity<List<BuildingAddressDB>> findAllByMainGovernorate(@RequestBody String mainGovernorate) {
-		List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.findAllByMainGovernorate(mainGovernorate) ;
+		List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.findAllByMainGovernorate(mainGovernorate);
 		return new ResponseEntity<List<BuildingAddressDB>>(buildingAddressDBs, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/findAllBySubGovernorate")
 	public ResponseEntity<List<BuildingAddressDB>> findAllBySubGovernorate(@RequestBody String subGovernorate) {
-		List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.findAllBySubGovernorate(subGovernorate) ;
+		List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.findAllBySubGovernorate(subGovernorate);
 		return new ResponseEntity<List<BuildingAddressDB>>(buildingAddressDBs, HttpStatus.OK);
 	}
 
 	@PostMapping("/createBuildingAddressDB")
-	public ResponseEntity<List<BuildingAddressDB>> createBuildingAddressDB(@RequestBody BuildingAddressDB buildingAddressDB) {
+	public ResponseEntity<List<BuildingAddressDB>> createBuildingAddressDB(
+			@RequestBody BuildingAddressDB buildingAddressDB) {
 		if (buildingAddressDB != null) {
 			buildingAddressDBService.save(buildingAddressDB);
-			List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.getAllBuildingAddress() ;
+			List<BuildingAddressDB> buildingAddressDBs = buildingAddressDBService.getAllBuildingAddress();
 			return new ResponseEntity<List<BuildingAddressDB>>(buildingAddressDBs, HttpStatus.OK);
 		} else {
 			return null;
@@ -66,8 +75,9 @@ public class BuildingAddressDBController {
 	}
 
 	@PostMapping("/updateBuildingAddressDB")
-	public ResponseEntity<List<BuildingAddressDB>> updateBuildingAddressDB(@RequestParam("buildingAddress") String buildingAddress,
-			@RequestParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<List<BuildingAddressDB>> updateBuildingAddressDB(
+			@RequestParam("buildingAddress") String buildingAddress, @RequestParam("id") String id)
+			throws JsonParseException, JsonMappingException, IOException {
 		if (buildingAddress == null) {
 			throw new NullPointerException();
 		}

@@ -12,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -46,7 +45,6 @@ public class User implements Serializable{
 	private Date createdDate;
 	private Date updatedDate;
 
-	private Long age ;
 	
 	@OneToMany(mappedBy = "user", targetEntity = UserMessages.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UserMessages> userMessages;
@@ -56,6 +54,10 @@ public class User implements Serializable{
 
 	@OneToOne(targetEntity=UserAdress.class,cascade=CascadeType.ALL) 
 	private UserAdress userAdresses;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Buildings> buildings;
 
 	public Long getId() {
 		return id;
@@ -143,14 +145,6 @@ public class User implements Serializable{
 
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
-	}
-
-	public Long getAge() {
-		return age;
-	}
-
-	public void setAge(Long age) {
-		this.age = age;
 	}
 
 	public List<UserMessages> getUserMessages() {
